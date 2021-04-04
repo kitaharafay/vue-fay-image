@@ -1,7 +1,7 @@
 {
-  "name": "vue-lazy-image",
+  "name": "vue-fay-image",
   "version": "0.1.0",
-  "private": true,
+  "main": "fayimage.umd.min",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",

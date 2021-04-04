@@ -7,3 +7,5 @@ index.html
 babel.config.js
 package.json
 yarn.lock
+demo.html
+*.map
