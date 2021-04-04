@@ -1,7 +1,7 @@
 {
   "name": "vue-fay-image",
-  "version": "0.1.0",
-  "main": "fayimage.umd.min",
+  "version": "0.1.1",
+  "main": "./dist/fayimage.umd.min.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
