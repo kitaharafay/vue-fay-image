@@ -39,7 +39,7 @@ export default {
     width: { type: [String, Number], default: 200 },
     height: { type: [String, Number], default: 200 },
     delay: { type: Number, default: 200 },
-    immediate: { type: Boolean, default: false },
+    lazy: { type: Boolean, default: false },
   },
   data() {
     return {
@@ -78,7 +78,11 @@ export default {
   },
   methods: {
     initComponent() {
-      this.initIntersectionObserver();
+      if (this.lazy) {
+        this.initIntersectionObserver();
+      } else {
+        this.setImage();
+      }
     },
     initIntersectionObserver() {
       if (!this.observer) {
@@ -112,6 +116,7 @@ export default {
     },
     setImage() {
       this.realImageSrc = this.src;
+      this.loading = false;
       this.loaded = true;
     },
     setImageDelay() {
@@ -121,7 +126,6 @@ export default {
         }, this.delay));
     },
     onLoadHandler() {
-      this.loading = false;
       if (this.delay) {
         this.setImageDelay();
       } else {
