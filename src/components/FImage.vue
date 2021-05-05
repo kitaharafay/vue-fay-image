@@ -1,7 +1,12 @@
 <template>
-  <div class="fay-image" :style="wrapperStyle">
+  <div
+    class="fay-image"
+    :class="{ 'fay-image--bordered': bordered }"
+    :style="wrapperStyle"
+  >
     <div class="fay-image-wrapper">
       <img
+        v-if="!loading"
         class="fay-image-instance"
         ref="image"
         :src="realImageSrc"
@@ -40,6 +45,7 @@ export default {
     height: { type: [String, Number], default: 200 },
     delay: { type: Number, default: 200 },
     lazy: { type: Boolean, default: false },
+    bordered: { type: Boolean, default: false },
   },
   data() {
     return {
@@ -78,6 +84,9 @@ export default {
   },
   methods: {
     initComponent() {
+      this.loading = true;
+      this.loaded = false;
+      this.error = false;
       if (this.lazy) {
         this.initIntersectionObserver();
       } else {
@@ -85,7 +94,7 @@ export default {
       }
     },
     initIntersectionObserver() {
-      if (!this.observer) {
+      if (this.observer) {
         this.observer = null;
       }
       this.observer = new IntersectionObserver(this.intersectionObserverCb);
@@ -103,7 +112,6 @@ export default {
       this.virtualImage.onload = null;
       this.virtualImage.onerror = null;
       this.virtualImage = null;
-      this.realImageSrc = null;
     },
     loadImage() {
       if (this.virtualImage) {
@@ -120,10 +128,10 @@ export default {
       this.loaded = true;
     },
     setImageDelay() {
-      !this.delayTask &&
-        (this.delayTask = setTimeout(() => {
-          this.setImage();
-        }, this.delay));
+      if (this.delayTask) clearTimeout(this.delayTask);
+      this.delayTask = setTimeout(() => {
+        this.setImage();
+      }, this.delay);
     },
     onLoadHandler() {
       if (this.delay) {
@@ -142,6 +150,10 @@ export default {
 <style lang="less" scoped>
 .fay-image {
   display: inline-block;
+  &.fay-image--bordered {
+    border: 1px solid #f5f5f5;
+  }
+
   .fay-image-wrapper {
     position: relative;
     width: 100%;
@@ -161,7 +173,7 @@ export default {
       right: 0;
       bottom: 0;
       left: 0;
-      z-index: 10;
+      z-index: 20;
       transition: 0.3s all;
       opacity: 1;
       background: #f5f5f5;
