@@ -6,7 +6,6 @@
   >
     <div class="fay-image-wrapper">
       <img
-        v-if="!loading"
         class="fay-image-instance"
         ref="image"
         :src="realImageSrc"
