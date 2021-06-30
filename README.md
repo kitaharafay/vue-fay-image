@@ -14,6 +14,7 @@ npm install vue-fay-image --save
 | height |  高度，默认单位为 px   | number  |  200   |
 | delay  | 延迟加载时间，单位毫秒 | number  |  200   |
 | lazy   |    是否开启图片懒加    | boolean | false  |
+| mode   |    图片加载模式    | string | scaleToFill  |
 
 ## 事件
 

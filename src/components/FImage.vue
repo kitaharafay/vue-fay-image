@@ -8,6 +8,7 @@
       <img
         class="fay-image-instance"
         ref="image"
+        :style="[instanceStyle]"
         :src="realImageSrc"
         @click="$emit('click', src)"
       />
@@ -35,16 +36,26 @@
 </template>
 
 <script>
-import IntersectionObserver from "intersection-observer-polyfill";
+import IntersectionObserver from 'intersection-observer-polyfill'
+/**
+ * @property {String} src 图片资源地址
+ * @property {String|Number} width 宽度，单位为px（默认200px）
+ * @property {String|Number} height 高度，单位为px（默认为200px）
+ * @property {Number} delay 延迟加载时间，单位为ms（默认为200ms）
+ * @property {Boolean} lazy 懒加载（默认不开启 false）
+ * @property {Boolean} bordered 图片边框（默认没有边框 false）
+ * @property {String} mode 图片加载模式（默认scaleToFill） [scaleToFill|aspectFit]
+ */
 export default {
-  name: "FImage",
+  name: 'FImage',
   props: {
-    src: { type: String, default: "" },
+    src: { type: String, default: '' },
     width: { type: [String, Number], default: 200 },
     height: { type: [String, Number], default: 200 },
     delay: { type: Number, default: 200 },
     lazy: { type: Boolean, default: false },
     bordered: { type: Boolean, default: false },
+    mode: { type: String, default: 'scaleToFill' },
   },
   data() {
     return {
@@ -53,97 +64,118 @@ export default {
       error: false,
       delayTask: null,
       observer: null,
-      realImageSrc: "",
+      realImageSrc: '',
       virtualImage: null,
-    };
+    }
   },
   beforeDestroy() {
-    this.virtualImage && this.destroyVirtualImage();
-    this.delayTask && clearTimeout(this.delayTask);
-    this.observer && (this.observer = null);
+    this.virtualImage && this.destroyVirtualImage()
+    this.delayTask && clearTimeout(this.delayTask)
+    this.observer && (this.observer = null)
   },
   watch: {
     src: {
       immediate: false,
       handler() {
-        this.initComponent();
+        this.initComponent()
       },
     },
   },
   mounted() {
-    this.initComponent();
+    this.initComponent()
   },
   computed: {
     wrapperStyle() {
       return {
         width: `${this.width}px`,
         height: `${this.height}px`,
-      };
+      }
+    },
+    instanceStyle() {
+      switch (this.mode) {
+        case 'scaleToFill':
+          return {
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+          }
+        case 'aspectFit':
+          return {
+            top: '50%',
+            left: '50%',
+            maxWidth: '100%',
+            maxHeight: '100%',
+            transform: 'translate(-50%, -50%)',
+          }
+        default:
+          return {}
+      }
     },
   },
   methods: {
     initComponent() {
-      this.loading = true;
-      this.loaded = false;
-      this.error = false;
+      this.loading = true
+      this.loaded = false
+      this.error = false
       if (this.lazy) {
-        this.initIntersectionObserver();
+        this.initIntersectionObserver()
       } else {
-        this.setImage();
+        this.setImage()
       }
     },
     initIntersectionObserver() {
       if (this.observer) {
-        this.observer = null;
+        this.observer = null
       }
-      this.observer = new IntersectionObserver(this.intersectionObserverCb);
-      this.observer.observe(this.$refs.image);
+      this.observer = new IntersectionObserver(this.intersectionObserverCb)
+      this.observer.observe(this.$refs.image)
     },
     intersectionObserverCb(entries) {
       entries.forEach((entry) => {
         if (entry.isIntersecting && !this.loaded) {
-          this.loadImage();
-          this.observer.unobserve(entry.target);
+          this.loadImage()
+          this.observer.unobserve(entry.target)
         }
-      });
+      })
     },
     destroyVirtualImage() {
-      this.virtualImage.onload = null;
-      this.virtualImage.onerror = null;
-      this.virtualImage = null;
+      this.virtualImage.onload = null
+      this.virtualImage.onerror = null
+      this.virtualImage = null
     },
     loadImage() {
       if (this.virtualImage) {
-        this.destroyVirtualImage();
+        this.destroyVirtualImage()
       }
-      this.virtualImage = new Image();
-      this.virtualImage.onload = this.onLoadHandler;
-      this.virtualImage.onerror = this.onErrorHandler;
-      this.virtualImage.src = this.src;
+      this.virtualImage = new Image()
+      this.virtualImage.onload = this.onLoadHandler
+      this.virtualImage.onerror = this.onErrorHandler
+      this.virtualImage.src = this.src
     },
     setImage() {
-      this.realImageSrc = this.src;
-      this.loading = false;
-      this.loaded = true;
+      this.realImageSrc = this.src
+      this.loading = false
+      this.loaded = true
     },
     setImageDelay() {
-      if (this.delayTask) clearTimeout(this.delayTask);
+      if (this.delayTask) clearTimeout(this.delayTask)
       this.delayTask = setTimeout(() => {
-        this.setImage();
-      }, this.delay);
+        this.setImage()
+      }, this.delay)
     },
     onLoadHandler() {
       if (this.delay) {
-        this.setImageDelay();
+        this.setImageDelay()
       } else {
-        this.setImage();
+        this.setImage()
       }
     },
     onErrorHandler() {
-      this.error = true;
+      this.error = true
     },
   },
-};
+}
 </script>
 
 <style lang="less" scoped>
@@ -157,13 +189,10 @@ export default {
     position: relative;
     width: 100%;
     height: 100%;
+    overflow: hidden;
 
     .fay-image-instance {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
       z-index: 5;
     }
     .fay-image-cover {
