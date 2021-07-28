@@ -44,7 +44,7 @@ import IntersectionObserver from 'intersection-observer-polyfill'
  * @property {Number} delay 延迟加载时间，单位为ms（默认为200ms）
  * @property {Boolean} lazy 懒加载（默认不开启 false）
  * @property {Boolean} bordered 图片边框（默认没有边框 false）
- * @property {String} mode 图片加载模式（默认scaleToFill） [scaleToFill|aspectFit]
+ * @property {String} mode 图片加载模式（默认scaleToFill） [scaleToFill|aspectFit|aspectFill]
  */
 export default {
   name: 'FImage',
@@ -87,8 +87,8 @@ export default {
   computed: {
     wrapperStyle() {
       return {
-        width: `${this.width}px`,
-        height: `${this.height}px`,
+        width: /%/.test(this.width) ? this.width : `${this.width}px`,
+        height: /%/.test(this.height) ? this.height : `${this.height}px`,
       }
     },
     instanceStyle() {
@@ -107,6 +107,14 @@ export default {
             maxWidth: '100%',
             maxHeight: '100%',
             transform: 'translate(-50%, -50%)',
+          }
+        case 'aspectFill':
+          return {
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
           }
         default:
           return {}

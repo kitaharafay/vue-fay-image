@@ -1,12 +1,21 @@
 <!--
  * @Date: 2021-06-30 11:07:10
  * @LastEditors: fayyang
- * @LastEditTime: 2021-06-30 11:35:30
+ * @LastEditTime: 2021-07-28 18:41:56
  * @Description: 
 -->
 <template>
   <div id="app">
-    <f-image :src="src" :lazy="false" :bordered="true" mode="aspectFit" />
+    <div class="wrapper">
+      <f-image
+        :src="src"
+        :lazy="false"
+        :bordered="true"
+        mode="aspectFill"
+        height="100%"
+        width="100"
+      />
+    </div>
     <button @click="onModifyHandler">modify</button>
   </div>
 </template>
@@ -28,3 +37,11 @@ export default {
   },
 }
 </script>
+
+<style lang="less" scoped>
+.wrapper {
+  height: 400px;
+  width: 400px;
+  border: 1px solid #666;
+}
+</style>
